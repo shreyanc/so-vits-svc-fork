@@ -1,0 +1,3 @@
+[submodule "uvr"]
+	path = uvr
+	url = git@github.com:Anjok07/ultimatevocalremovergui.git
