@@ -109,7 +109,7 @@ def train(
 ):
     """Train model
     If D_0.pth or G_0.pth not found, automatically download from hub."""
-    from .train import train
+    from train import train
 
     config_path = Path(config_path)
     model_path = Path(model_path)

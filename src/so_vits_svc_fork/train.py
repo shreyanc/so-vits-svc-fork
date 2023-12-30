@@ -23,13 +23,13 @@ import so_vits_svc_fork.f0
 import so_vits_svc_fork.modules.commons as commons
 import so_vits_svc_fork.utils
 
-from . import utils
-from .dataset import TextAudioCollate, TextAudioDataset
-from .logger import is_notebook
-from .modules.descriminators import MultiPeriodDiscriminator
-from .modules.losses import discriminator_loss, feature_loss, generator_loss, kl_loss
-from .modules.mel_processing import mel_spectrogram_torch
-from .modules.synthesizers import SynthesizerTrn
+import utils
+from dataset import TextAudioCollate, TextAudioDataset
+from logger import is_notebook
+from modules.descriminators import MultiPeriodDiscriminator
+from modules.losses import discriminator_loss, feature_loss, generator_loss, kl_loss
+from modules.mel_processing import mel_spectrogram_torch
+from modules.synthesizers import SynthesizerTrn
 
 LOG = getLogger(__name__)
 torch.set_float32_matmul_precision("high")
