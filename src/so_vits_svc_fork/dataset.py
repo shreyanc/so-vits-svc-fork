@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset
 
-from hparams import HParams
+from so_vits_svc_fork.hparams import HParams
 
 
 class TextAudioDataset(Dataset):

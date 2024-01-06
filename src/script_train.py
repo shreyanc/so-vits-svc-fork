@@ -106,7 +106,7 @@ def train(
 ):
     """Train model
     If D_0.pth or G_0.pth not found, automatically download from hub."""
-    from train import train
+    from so_vits_svc_fork.train import train
 
     config_path = Path(config_path)
     model_path = Path(model_path)
@@ -127,7 +127,7 @@ def train(
     )
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', '--input', type=str, default='/share/hel/home/shreyan/PROJECTS/songform/datasets/ShreyanVoiceSamples/shreyan_voice.wav', help='Path to the audio file')
+parser.add_argument('-i', '--input', type=str, default='/home/shreyan/Downloads/shreyan_voice_1min.wav', help='Path to the audio file')
 parser.add_argument('-s', '--speaker', type=str, default='shreyan', help='Speaker name')
 
 args = parser.parse_args()
@@ -145,7 +145,7 @@ split_audio(input_file=audio_file_path, speaker_name=speaker_name, output_dir=sp
 
 # Preprocess
 pre_resample(input_dir=dataset_raw_dir,             
-             output_dir="src/so_vits_svc_fork/dataset/44k",
+             output_dir="so_vits_svc_fork/dataset/44k",
              sampling_rate=44100,
              n_jobs=-1,
              top_db=30,
@@ -153,22 +153,22 @@ pre_resample(input_dir=dataset_raw_dir,
              hop_seconds=0.3
 )
 
-pre_config(input_dir="src/so_vits_svc_fork/dataset/44k",
-           filelist_path="src/so_vits_svc_fork/filelists/44k",
-           config_path="src/so_vits_svc_fork/configs/44k/config.json",
+pre_config(input_dir="so_vits_svc_fork/dataset/44k",
+           filelist_path="so_vits_svc_fork/filelists/44k",
+           config_path="so_vits_svc_fork/configs/44k/config.json",
            config_type="so-vits-svc-4.0v1"
 )    
 
-pre_hubert(input_dir="src/so_vits_svc_fork/dataset/44k",
-           config_path="src/so_vits_svc_fork/configs/44k/config.json",
+pre_hubert(input_dir="so_vits_svc_fork/dataset/44k",
+           config_path="so_vits_svc_fork/configs/44k/config.json",
            n_jobs=None,
            force_rebuild=True,
-           f0_method="dio",
+           f0_method="crepe",
 )
 
 # Train
-train(config_path="src/so_vits_svc_fork/configs/44k/config.json",
-      model_path="src/so_vits_svc_fork/logs/44k",
+train(config_path="so_vits_svc_fork/configs/44k/config.json",
+      model_path="so_vits_svc_fork/logs/44k",
       tensorboard=False,
       reset_optimizer=False
 )

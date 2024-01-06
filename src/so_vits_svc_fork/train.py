@@ -23,13 +23,13 @@ import so_vits_svc_fork.f0
 import so_vits_svc_fork.modules.commons as commons
 import so_vits_svc_fork.utils
 
-import utils
-from dataset import TextAudioCollate, TextAudioDataset
-from logger import is_notebook
-from modules.descriminators import MultiPeriodDiscriminator
-from modules.losses import discriminator_loss, feature_loss, generator_loss, kl_loss
-from modules.mel_processing import mel_spectrogram_torch
-from modules.synthesizers import SynthesizerTrn
+# import utils
+from so_vits_svc_fork.dataset import TextAudioCollate, TextAudioDataset
+from so_vits_svc_fork.logger import is_notebook
+from so_vits_svc_fork.modules.descriminators import MultiPeriodDiscriminator
+from so_vits_svc_fork.modules.losses import discriminator_loss, feature_loss, generator_loss, kl_loss
+from so_vits_svc_fork.modules.mel_processing import mel_spectrogram_torch
+from so_vits_svc_fork.modules.synthesizers import SynthesizerTrn
 
 LOG = getLogger(__name__)
 torch.set_float32_matmul_precision("high")
@@ -73,8 +73,8 @@ def train(
     config_path = Path(config_path)
     model_path = Path(model_path)
 
-    hparams = utils.get_backup_hparams(config_path, model_path)
-    utils.ensure_pretrained_model(
+    hparams = so_vits_svc_fork.utils.get_backup_hparams(config_path, model_path)
+    so_vits_svc_fork.utils.ensure_pretrained_model(
         model_path,
         hparams.model.get(
             "pretrained",
@@ -340,17 +340,17 @@ class VitsLightning(pl.LightningModule):
         return self.trainer.fit_loop.epoch_loop.total_batch_idx + 1
 
     def load(self, reset_optimizer: bool = False):
-        latest_g_path = utils.latest_checkpoint_path(self.hparams.model_dir, "G_*.pth")
-        latest_d_path = utils.latest_checkpoint_path(self.hparams.model_dir, "D_*.pth")
+        latest_g_path = so_vits_svc_fork.utils.latest_checkpoint_path(self.hparams.model_dir, "G_*.pth")
+        latest_d_path = so_vits_svc_fork.utils.latest_checkpoint_path(self.hparams.model_dir, "D_*.pth")
         if latest_g_path is not None and latest_d_path is not None:
             try:
-                _, _, _, epoch = utils.load_checkpoint(
+                _, _, _, epoch = so_vits_svc_fork.utils.load_checkpoint(
                     latest_g_path,
                     self.net_g,
                     self.optim_g,
                     reset_optimizer,
                 )
-                _, _, _, epoch = utils.load_checkpoint(
+                _, _, _, epoch = so_vits_svc_fork.utils.load_checkpoint(
                     latest_d_path,
                     self.net_d,
                     self.optim_d,
@@ -480,13 +480,13 @@ class VitsLightning(pl.LightningModule):
         if self.total_batch_idx % self.hparams.train.log_interval == 0:
             self.log_image_dict(
                 {
-                    "slice/mel_org": utils.plot_spectrogram_to_numpy(
+                    "slice/mel_org": so_vits_svc_fork.utils.plot_spectrogram_to_numpy(
                         y_mel[0].data.cpu().float().numpy()
                     ),
-                    "slice/mel_gen": utils.plot_spectrogram_to_numpy(
+                    "slice/mel_gen": so_vits_svc_fork.utils.plot_spectrogram_to_numpy(
                         y_hat_mel[0].data.cpu().float().numpy()
                     ),
-                    "all/mel": utils.plot_spectrogram_to_numpy(
+                    "all/mel": so_vits_svc_fork.utils.plot_spectrogram_to_numpy(
                         mel[0].data.cpu().float().numpy()
                     ),
                     "all/lf0": so_vits_svc_fork.utils.plot_data_to_numpy(
@@ -558,10 +558,10 @@ class VitsLightning(pl.LightningModule):
             )
             self.log_image_dict(
                 {
-                    "gen/mel": utils.plot_spectrogram_to_numpy(
+                    "gen/mel": so_vits_svc_fork.utils.plot_spectrogram_to_numpy(
                         y_hat_mel[0].cpu().float().numpy()
                     ),
-                    "gt/mel": utils.plot_spectrogram_to_numpy(
+                    "gt/mel": so_vits_svc_fork.utils.plot_spectrogram_to_numpy(
                         mel[0].cpu().float().numpy()
                     ),
                 }
