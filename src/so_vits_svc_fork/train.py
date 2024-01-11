@@ -283,7 +283,7 @@ class VitsLightning(pl.LightningModule):
         current_epoch = self.current_epoch + adjust
         total_batch_idx = self.total_batch_idx - 1 + adjust
 
-        utils.save_checkpoint(
+        so_vits_svc_fork.utils.save_checkpoint(
             self.net_g,
             self.optim_g,
             self.learning_rate,
@@ -291,7 +291,7 @@ class VitsLightning(pl.LightningModule):
             Path(self.hparams.model_dir)
             / f"G_{total_batch_idx if self.hparams.train.get('ckpt_name_by_step', False) else current_epoch}.pth",
         )
-        utils.save_checkpoint(
+        so_vits_svc_fork.utils.save_checkpoint(
             self.net_d,
             self.optim_d,
             self.learning_rate,
@@ -301,7 +301,7 @@ class VitsLightning(pl.LightningModule):
         )
         keep_ckpts = self.hparams.train.get("keep_ckpts", 0)
         if keep_ckpts > 0:
-            utils.clean_checkpoints(
+            so_vits_svc_fork.utils.clean_checkpoints(
                 path_to_models=self.hparams.model_dir,
                 n_ckpts_to_keep=keep_ckpts,
                 sort_by_time=True,

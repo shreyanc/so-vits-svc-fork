@@ -84,17 +84,25 @@ def infer(
     )
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--input', type=str, default='/home/shreyan/Downloads/shreyan_voice_1min.wav', help='Path to the audio file')
+parser.add_argument('-m', '--model', type=str, default='', help='Model path')
+parser.add_argument('-s', '--speaker', type=str, default='shreyan', help='Speaker name')
+parser.add_argument('-o', '--output', type=str, default='../files', help='output file name')
+
+args = parser.parse_args()
+
 infer(
-    input_path="path_to_input_file",
-    output_path=None,
-    speaker='mark_cuban_5min',
-    model_path="so_vits_svc_fork/configs/44k/",
+    input_path=args.input,
+    output_path=args.output,
+    speaker=args.speaker,
+    model_path=args.model,
     config_path="so_vits_svc_fork/configs/44k/config.json",
     cluster_model_path=None,
     recursive=False,
     transpose=0,
     db_thresh=-20,
-    f0_method="dio",
+    f0_method="crepe",
     auto_predict_f0=True,
     cluster_infer_ratio=0,
     noise_scale=0.4,

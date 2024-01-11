@@ -15,7 +15,7 @@ def split_audio(input_file: str, speaker_name: str, output_dir: str, segment_len
         output_dir (str): Path to the output directory where the segments will be saved.
         segment_length (int): Length of each segment in seconds.
     """
-
+    print("Splitting audio")
     subprocess.run([
         'ffmpeg',
         '-i', input_file,
@@ -41,6 +41,8 @@ def pre_resample(
     """Preprocessing part 1: resample"""
     from so_vits_svc_fork.preprocessing.preprocess_resample import preprocess_resample
 
+    print("Preprocessing part 1: resample")
+
     input_dir = Path(input_dir)
     output_dir = Path(output_dir)
     preprocess_resample(
@@ -63,6 +65,7 @@ def pre_config(
     """Preprocessing part 2: config"""
     from so_vits_svc_fork.preprocessing.preprocess_flist_config import preprocess_config
 
+    print("Preprocessing part 2: config")
     input_dir = Path(input_dir)
     filelist_path = Path(filelist_path)
     config_path = Path(config_path)
@@ -86,7 +89,7 @@ def pre_hubert(
     """Preprocessing part 3: hubert
     If the HuBERT model is not found, it will be downloaded automatically."""
     from so_vits_svc_fork.preprocessing.preprocess_hubert_f0 import preprocess_hubert_f0
-
+    print("Preprocessing part 3: hubert")
     input_dir = Path(input_dir)
     config_path = Path(config_path)
     preprocess_hubert_f0(
@@ -108,6 +111,7 @@ def train(
     If D_0.pth or G_0.pth not found, automatically download from hub."""
     from so_vits_svc_fork.train import train
 
+    print("Training")
     config_path = Path(config_path)
     model_path = Path(model_path)
 
@@ -168,7 +172,7 @@ pre_hubert(input_dir="so_vits_svc_fork/dataset/44k",
 
 # Train
 train(config_path="so_vits_svc_fork/configs/44k/config.json",
-      model_path="so_vits_svc_fork/logs/44k",
+      model_path=f"so_vits_svc_fork/logs/44k/{args.speaker}",
       tensorboard=False,
       reset_optimizer=False
 )
