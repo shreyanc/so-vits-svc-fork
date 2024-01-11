@@ -190,19 +190,34 @@ converted_directory = '../Converted'
 models_directory = 'so_vits_svc_fork/logs/44k'
 
 # ML code to be run asynchronously
+# async def run(cmd):
+#     proc = await asyncio.create_subprocess_shell(
+#         cmd,
+#         stdout=asyncio.subprocess.PIPE,
+#         stderr=asyncio.subprocess.PIPE)
+
+#     stdout, stderr = await proc.communicate()
+
+#     print(f'[{cmd!r} exited with {proc.returncode}]')
+#     if stdout:
+#         print(f'[stdout]\n{stdout.decode()}')
+#     if stderr:
+#         print(f'[stderr]\n{stderr.decode()}')
+
+
 async def run(cmd):
     proc = await asyncio.create_subprocess_shell(
         cmd,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE)
 
-    stdout, stderr = await proc.communicate()
+    while True:
+        line = await proc.stdout.readline()
+        if not line:
+            break
+        print(line.decode().strip())
 
-    print(f'[{cmd!r} exited with {proc.returncode}]')
-    if stdout:
-        print(f'[stdout]\n{stdout.decode()}')
-    if stderr:
-        print(f'[stderr]\n{stderr.decode()}')
+    await proc.communicate()
 
 ## Wiggle
 
@@ -249,9 +264,22 @@ def upload_file(song_id: str, voice_id: str, uploaded_file: UploadFile = File(..
         'file_id': file_id,
     }
 
+# @app.get('/infer_audio/{song_id}')
+# async def infer_audio(song_id: str, voice_id: str):
+#     valid_song_id = validate_song_id(song_id)
+#     file_id = str(uuid.uuid4())[:8]
+#     song_path = f'../TestSongs/{valid_song_id}.mp3'
+#     infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{file_id}_converted.wav\''
+#     print(infer_cmd)
+#     shell_cmd = f'{infer_cmd}'
+#     task = asyncio.create_task(run(shell_cmd))
+#     await task
+#     return {
+#         'file_id': file_id,
+#     }
 
 @app.get('/infer_audio/{song_id}')
-async def infer_audio(song_id: str, voice_id: str):
+def infer_audio(song_id: str, voice_id: str):
     valid_song_id = validate_song_id(song_id)
     file_id = str(uuid.uuid4())[:8]
     song_path = f'../TestSongs/{valid_song_id}.mp3'
