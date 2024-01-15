@@ -256,7 +256,9 @@ def upload_file(song_id: str, voice_id: str, uploaded_file: UploadFile = File(..
         train_cmd = f'python3 script_train.py -i \'{file_path}\' -s \'{voice_id}\''
         infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{file_id}_converted.wav\''
         shell_cmd = f'{train_cmd} && {infer_cmd}'
+        print(f'Inference Output: {converted_directory}/{file_id}_converted.wav')
         asyncio.run(run(shell_cmd))
+
 
     return {
         'uploaded_file': uploaded_file.filename,
