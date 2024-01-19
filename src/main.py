@@ -251,12 +251,14 @@ def upload_file(song_id: str, voice_id: str, uploaded_file: UploadFile = File(..
     if os.path.exists(speaker_path):
         infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{file_id}_converted.wav\''
         shell_cmd = f'{infer_cmd}'
+        print(shell_cmd)
         asyncio.run(run(shell_cmd))
     else:
         train_cmd = f'python3 script_train.py -i \'{file_path}\' -s \'{voice_id}\''
         infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{file_id}_converted.wav\''
         shell_cmd = f'{train_cmd} && {infer_cmd}'
         print(f'Inference Output: {converted_directory}/{file_id}_converted.wav')
+        print(shell_cmd)
         asyncio.run(run(shell_cmd))
 
 
@@ -301,13 +303,13 @@ async def get_audio(file_id: str, voice_id: str):
     file_path_converted = os.path.join(f'{converted_directory}', f'{file_id}_converted.wav')
     file_path_trained_models = os.path.join(f'{models_directory}/{voice_id}')
 
-    if not os.path.exists(file_path_original):
-        raise HTTPException(status_code=404, 
-                            detail= {
-                                'reason': 'original_upload_missing',
-                                'message': 'Original file failed to upload.',
-                                'debug': (f'Path: {file_path_original}')
-                            })
+    # if not os.path.exists(file_path_original):
+    #     raise HTTPException(status_code=404, 
+    #                         detail= {
+    #                             'reason': 'original_upload_missing',
+    #                             'message': 'Original file failed to upload.',
+    #                             'debug': (f'Path: {file_path_original}')
+    #                         })
     if not os.path.exists(file_path_trained_models):
         raise HTTPException(status_code=404,
                             detail= {

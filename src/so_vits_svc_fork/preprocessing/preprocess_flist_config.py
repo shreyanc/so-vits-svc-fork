@@ -16,6 +16,7 @@ CONFIG_TEMPLATE_DIR = Path(__file__).parent / "config_templates"
 
 def preprocess_config(
     input_dir: Path | str,
+    selected_speaker: str,
     train_list_path: Path | str,
     val_list_path: Path | str,
     test_list_path: Path | str,
@@ -34,11 +35,13 @@ def preprocess_config(
     spk_id = 0
     random = np.random.RandomState(1234)
     for speaker in os.listdir(input_dir):
+        if speaker != selected_speaker:
+            continue
         spk_dict[speaker] = spk_id
         spk_id += 1
         paths = []
         for path in tqdm(list((input_dir / speaker).rglob("*.wav"))):
-            if get_duration(filename=path) < 0.3:
+            if get_duration(path=path) < 0.3:
                 LOG.warning(f"skip {path} because it is too short.")
                 continue
             paths.append(path)

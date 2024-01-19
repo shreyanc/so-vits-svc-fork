@@ -58,6 +58,7 @@ def pre_resample(
 
 def pre_config(
     input_dir: Path,
+    speaker: str,
     filelist_path: Path,
     config_path: Path,
     config_type: str,
@@ -71,6 +72,7 @@ def pre_config(
     config_path = Path(config_path)
     preprocess_config(
         input_dir=input_dir,
+        selected_speaker=speaker,
         train_list_path=filelist_path / "train.txt",
         val_list_path=filelist_path / "val.txt",
         test_list_path=filelist_path / "test.txt",
@@ -81,6 +83,7 @@ def pre_config(
 
 def pre_hubert(
     input_dir: Path,
+    speaker: str,
     config_path: Path,
     n_jobs: bool,
     force_rebuild: bool,
@@ -94,6 +97,7 @@ def pre_hubert(
     config_path = Path(config_path)
     preprocess_hubert_f0(
         input_dir=input_dir,
+        selected_speaker=speaker,
         config_path=config_path,
         n_jobs=n_jobs,
         force_rebuild=force_rebuild,
@@ -158,12 +162,14 @@ pre_resample(input_dir=dataset_raw_dir,
 )
 
 pre_config(input_dir="so_vits_svc_fork/dataset/44k",
+           speaker=speaker_name,
            filelist_path="so_vits_svc_fork/filelists/44k",
            config_path="so_vits_svc_fork/configs/44k/config.json",
            config_type="so-vits-svc-4.0v1"
 )    
 
 pre_hubert(input_dir="so_vits_svc_fork/dataset/44k",
+           speaker=speaker_name,
            config_path="so_vits_svc_fork/configs/44k/config.json",
            n_jobs=None,
            force_rebuild=True,

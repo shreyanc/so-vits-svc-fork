@@ -118,6 +118,7 @@ def _process_batch(filepaths: Iterable[Path], pbar_position: int, **kwargs):
 
 def preprocess_hubert_f0(
     input_dir: Path | str,
+    selected_speaker: str,
     config_path: Path | str,
     n_jobs: int | None = None,
     f0_method: Literal["crepe", "crepe-tiny", "parselmouth", "dio", "harvest"] = "dio",
@@ -141,7 +142,8 @@ def preprocess_hubert_f0(
         )
         LOG.info(f"n_jobs automatically set to {n_jobs}, memory: {memory} MiB")
 
-    filepaths = list(input_dir.rglob("*.wav"))
+    selected_speaker_dir = input_dir / selected_speaker
+    filepaths = list(selected_speaker_dir.rglob("*.wav"))
     n_jobs = min(len(filepaths) // 16 + 1, n_jobs)
     shuffle(filepaths)
     filepath_chunks = np.array_split(filepaths, n_jobs)
