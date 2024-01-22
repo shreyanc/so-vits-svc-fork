@@ -6,6 +6,8 @@ src/so_vits_svc_fork/configs/
 src/so_vits_svc_fork/dataset/
 src/so_vits_svc_fork/filelists/
 src/so_vits_svc_fork/logs/
+src/so_vits_svc_fork/pretrained/
+src/runs/
 TestSongs/
 files/
 VoiceSamples/
