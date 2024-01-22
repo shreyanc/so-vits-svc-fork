@@ -7,7 +7,30 @@ from logging import getLogger
 import shutil
 
 
-def split_audio(input_file: str, speaker_name: str, output_dir: str, segment_length: int) -> None:
+# def split_audio(input_file: str, speaker_name: str, output_dir: str, segment_length: int) -> None:
+#     """
+#     Split an input audio file into multiple segments of length t and save them to the specified output directory.
+    
+#     Args:
+#         input_file (str): Path to the input audio file.
+#         output_dir (str): Path to the output directory where the segments will be saved.
+#         segment_length (int): Length of each segment in seconds.
+#     """
+#     print("Splitting audio")
+#     subprocess.run([
+#         'ffmpeg',
+#         '-i', input_file,
+#         '-f', 'segment',
+#         '-segment_time', str(segment_length),
+#         '-c', 'copy',
+#         '-map', '0',
+#         '-reset_timestamps', '1',
+#         f'{output_dir}/{speaker_name}_%03d.wav'
+#     ])
+
+import asyncio
+
+async def split_audio(input_file: str, speaker_name: str, output_dir: str, segment_length: int) -> None:
     """
     Split an input audio file into multiple segments of length t and save them to the specified output directory.
     
@@ -17,7 +40,7 @@ def split_audio(input_file: str, speaker_name: str, output_dir: str, segment_len
         segment_length (int): Length of each segment in seconds.
     """
     print("Splitting audio")
-    subprocess.run([
+    process = await asyncio.create_subprocess_exec(
         'ffmpeg',
         '-i', input_file,
         '-f', 'segment',
@@ -26,9 +49,9 @@ def split_audio(input_file: str, speaker_name: str, output_dir: str, segment_len
         '-map', '0',
         '-reset_timestamps', '1',
         f'{output_dir}/{speaker_name}_%03d.wav'
-    ])
-
-
+    )
+    await process.communicate()
+    
 
 def pre_resample(
     input_dir: Path,
