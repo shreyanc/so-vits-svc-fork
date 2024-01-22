@@ -541,11 +541,13 @@ class VitsLightning(pl.LightningModule):
 
         # end of epoch
         if self.trainer.is_last_batch:
+            print("Trained epoch", self.current_epoch)
             self.scheduler_g.step()
             self.scheduler_d.step()
 
     def validation_step(self, batch, batch_idx):
         # avoid logging with wrong global step
+        print("Validating epoch", self.current_epoch)
         if self.global_step == 0:
             return
         with torch.no_grad():
