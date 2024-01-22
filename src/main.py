@@ -211,13 +211,13 @@ async def run(cmd):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE)
 
-    while True:
-        line = await proc.stdout.readline()
-        if not line:
-            break
-        print(line.decode().strip())
+    # while True:
+    #     line = await proc.stdout.readline()
+    #     if not line:
+    #         break
+    #     print(line.decode().strip())
 
-    await proc.communicate()
+    # await proc.communicate()
 
 ## Wiggle
 
