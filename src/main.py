@@ -187,7 +187,7 @@ app = FastAPI()
 # Directory to store uploaded audio files
 upload_directory = '../VoiceSamples'
 converted_directory = '../Converted'
-models_directory = 'so_vits_svc_fork/logs/44k'
+models_directory = 'runs/logs/44k'
 
 # ML code to be run asynchronously
 # async def run(cmd):
@@ -272,7 +272,7 @@ def upload_file(song_id: str, voice_id: str, uploaded_file: UploadFile = File(..
         'uploaded_file': uploaded_file.filename,
         'uploaded_content': uploaded_file.content_type,
         # 'file_id': file_id,
-        'converted_filename': converted_filename,
+        'file_id': converted_filename,
     }
 
 
@@ -305,7 +305,7 @@ def infer_audio(song_id: str, voice_id: str):
         asyncio.run(run(shell_cmd))
     
     return {
-        'converted_filename': converted_filename,
+        'file_id': converted_filename,
     }
 
 
