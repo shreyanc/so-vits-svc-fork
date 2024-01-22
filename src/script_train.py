@@ -4,6 +4,7 @@ import os
 import subprocess
 from typing import Literal
 from logging import getLogger
+import shutil
 
 
 def split_audio(input_file: str, speaker_name: str, output_dir: str, segment_length: int) -> None:
@@ -153,7 +154,7 @@ split_audio(input_file=audio_file_path, speaker_name=speaker_name, output_dir=sp
 
 # Preprocess
 pre_resample(input_dir=dataset_raw_dir,             
-             output_dir="so_vits_svc_fork/dataset/44k",
+             output_dir="runs/dataset/44k",
              sampling_rate=44100,
              n_jobs=-1,
              top_db=30,
@@ -161,24 +162,30 @@ pre_resample(input_dir=dataset_raw_dir,
              hop_seconds=0.3
 )
 
-pre_config(input_dir="so_vits_svc_fork/dataset/44k",
+pre_config(input_dir="runs/dataset/44k",
            speaker=speaker_name,
-           filelist_path="so_vits_svc_fork/filelists/44k",
-           config_path="so_vits_svc_fork/configs/44k/config.json",
+           filelist_path="runs/filelists/44k",
+           config_path="runs/configs/44k/config.json",
            config_type="so-vits-svc-4.0v1"
 )    
 
-pre_hubert(input_dir="so_vits_svc_fork/dataset/44k",
+pre_hubert(input_dir="runs/dataset/44k",
            speaker=speaker_name,
-           config_path="so_vits_svc_fork/configs/44k/config.json",
+           config_path="runs/configs/44k/config.json",
            n_jobs=None,
            force_rebuild=True,
            f0_method="crepe",
 )
 
+
+os.makedirs(f"runs/logs/44k/{args.speaker}", exist_ok=True)
+shutil.copy("so_vits_svc_fork/pretrained/clean_G_320000.pth", f"runs/logs/44k/{args.speaker}/G_0.pth")
+shutil.copy("so_vits_svc_fork/pretrained/clean_D_320000.pth", f"runs/logs/44k/{args.speaker}/D_0.pth")
+
+
 # Train
-train(config_path="so_vits_svc_fork/configs/44k/config.json",
-      model_path=f"so_vits_svc_fork/logs/44k/{args.speaker}",
-      tensorboard=False,
-      reset_optimizer=False
+train(config_path="runs/configs/44k/config.json",
+    model_path=f"runs/logs/44k/{args.speaker}",
+    tensorboard=False,
+    reset_optimizer=False
 )
