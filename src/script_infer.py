@@ -97,7 +97,7 @@ infer(
     output_path=args.output,
     speaker=args.speaker,
     model_path=args.model,
-    config_path="so_vits_svc_fork/configs/44k/config.json",
+    config_path="runs/configs/44k/config.json",
     cluster_model_path=None,
     recursive=False,
     transpose=0,

@@ -173,7 +173,7 @@ pre_hubert(input_dir="runs/dataset/44k",
            speaker=speaker_name,
            config_path="runs/configs/44k/config.json",
            n_jobs=None,
-           force_rebuild=True,
+           force_rebuild=False,
            f0_method="crepe",
 )
 
