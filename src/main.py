@@ -217,7 +217,7 @@ async def run(cmd):
     #         break
     #     print(line.decode().strip())
 
-    # await proc.communicate()
+    await proc.communicate()
 
 ## Wiggle
 
