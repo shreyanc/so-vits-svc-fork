@@ -239,34 +239,42 @@ def validate_song_id(song_id: str):
 def upload_file(song_id: str, voice_id: str, uploaded_file: UploadFile = File(...)):
     valid_song_id = validate_song_id(song_id)
     song_path = f'../TestSongs/{valid_song_id}.mp3'
-    file_id = str(uuid.uuid4())[:8]
-    file_path = f'{upload_directory}/{file_id}.wav'
-    speaker_path = f"{models_directory}/{voice_id}"
+    # file_id = str(uuid.uuid4())[:8]
+    uploaded_voice_sample = f'{upload_directory}/{voice_id}.wav'
+    current_voice_models_dir = f"{models_directory}/{voice_id}"
 
-    with open(file_path, 'w+b') as file:
+    with open(uploaded_voice_sample, 'w+b') as file:
         shutil.copyfileobj(uploaded_file.file, file)
 
-    print(f'Processing [{file_id}]')
+    # print(f'Processing [{file_id}]')
 
-    if os.path.exists(speaker_path):
-        infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{file_id}_converted.wav\''
-        shell_cmd = f'{infer_cmd}'
-        print(shell_cmd)
-        asyncio.run(run(shell_cmd))
+    converted_filename = f'{voice_id}_{song_id}_converted.wav'
+
+    if os.path.exists(os.path.join(converted_directory, converted_filename)):
+        print(f'{converted_filename} already exists. Skipping conversion.')
     else:
-        train_cmd = f'python3 script_train.py -i \'{file_path}\' -s \'{voice_id}\''
-        infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{file_id}_converted.wav\''
-        shell_cmd = f'{train_cmd} && {infer_cmd}'
-        print(f'Inference Output: {converted_directory}/{file_id}_converted.wav')
-        print(shell_cmd)
-        asyncio.run(run(shell_cmd))
-
+        if os.path.exists(current_voice_models_dir):
+            print(f'Voice [{voice_id}] already exists. Skipping training.')
+            print(f'Inferring for song [{song_id}] with voice [{voice_id}]')
+            infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{converted_filename}\''
+            shell_cmd = f'{infer_cmd}'
+            print(shell_cmd)
+            asyncio.run(run(shell_cmd))
+        else:
+            print(f'Training for voice [{voice_id}] and then inferring for song [{song_id}]')
+            train_cmd = f'python3 script_train.py -i \'{uploaded_voice_sample}\' -s \'{voice_id}\''
+            infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{converted_filename}\''
+            shell_cmd = f'{train_cmd} && {infer_cmd}'
+            print(shell_cmd)
+            asyncio.run(run(shell_cmd))
 
     return {
         'uploaded_file': uploaded_file.filename,
         'uploaded_content': uploaded_file.content_type,
-        'file_id': file_id,
+        # 'file_id': file_id,
+        'converted_filename': converted_filename,
     }
+
 
 # @app.get('/infer_audio/{song_id}')
 # async def infer_audio(song_id: str, voice_id: str):
@@ -285,14 +293,19 @@ def upload_file(song_id: str, voice_id: str, uploaded_file: UploadFile = File(..
 @app.get('/infer_audio/{song_id}')
 def infer_audio(song_id: str, voice_id: str):
     valid_song_id = validate_song_id(song_id)
-    file_id = str(uuid.uuid4())[:8]
-    song_path = f'../TestSongs/{valid_song_id}.mp3'
-    infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{file_id}_converted.wav\''
-    print(infer_cmd)
-    shell_cmd = f'{infer_cmd}'
-    asyncio.run(run(shell_cmd))
+    converted_filename = f'{voice_id}_{song_id}_converted.wav'
+    if os.path.exists(os.path.join(converted_directory, converted_filename)):
+        print(f'{converted_filename} already exists. Skipping conversion.')
+    else:
+        # file_id = str(uuid.uuid4())[:8]
+        song_path = f'../TestSongs/{valid_song_id}.mp3'
+        infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{converted_filename}\''
+        print(infer_cmd)
+        shell_cmd = f'{infer_cmd}'
+        asyncio.run(run(shell_cmd))
+    
     return {
-        'file_id': file_id,
+        'converted_filename': converted_filename,
     }
 
 
