@@ -310,10 +310,10 @@ def infer_audio(song_id: str, voice_id: str):
 
 
 @app.get('/get_audio/{file_id}')
-async def get_audio(song_id: str, voice_id: str):
+async def get_audio(file_id: str, voice_id: str):
     # rel_filepath = f'files/{fileId}_converted.wav'
     # file_path_original = os.path.join(f'{upload_directory}', f'{file_id}.wav')
-    converted_filename = f'{voice_id}_{song_id}_converted.wav'
+    converted_filename = f'{voice_id}_{file_id}_converted.wav'
     file_path_converted = os.path.join(f'{converted_directory}', f'{converted_filename}')
     file_path_trained_models = os.path.join(f'{models_directory}/{voice_id}')
 
