@@ -172,3 +172,4 @@ tests/**/*.yaml
 *.pt
 user_gui_presets.json
 
+.vscode/launch.json
