@@ -179,6 +179,7 @@ from pydantic import BaseModel
 import shutil
 import uuid
 import os
+import wave
 # import wiggle_process_starganv2
 
 app = FastAPI()
@@ -246,7 +247,21 @@ def upload_file(song_id: str, voice_id: str, uploaded_file: UploadFile = File(..
     with open(uploaded_voice_sample, 'w+b') as file:
         shutil.copyfileobj(uploaded_file.file, file)
 
-    # print(f'Processing [{file_id}]')
+    def is_valid_wav(file_path: str) -> bool:
+        try:
+            with wave.open(file_path, 'rb') as wav_file:
+                # calculate length of the wave file in seconds
+                frames = wav_file.getnframes()
+                rate = wav_file.getframerate()
+                duration = frames / float(rate)
+                return True, duration
+        except wave.Error:
+            return False, None
+
+    if is_valid_wav(uploaded_voice_sample)[0]:
+        print("Uploaded audio validated: length =", round(is_valid_wav(uploaded_voice_sample)[1], 2), "seconds")
+    else:
+        raise HTTPException(status_code=400, detail='Uploaded file is not a valid .wav file.')
 
     converted_filename = f'{voice_id}_{song_id}_converted.wav'
 
