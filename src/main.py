@@ -206,7 +206,7 @@ models_directory = 'runs/logs/44k'
 #         print(f'[stderr]\n{stderr.decode()}')
 
 
-async def run(cmd):
+async def run(cmd, blocking: bool = False):
     proc = await asyncio.create_subprocess_shell(
         cmd,
         stdout=asyncio.subprocess.PIPE,
@@ -218,7 +218,26 @@ async def run(cmd):
     #         break
     #     print(line.decode().strip())
 
-    await proc.communicate()
+    if blocking:
+        await proc.communicate()
+
+
+# async def run(cmd):
+#     proc = await asyncio.create_subprocess_shell(
+#         cmd,
+#         stdout=asyncio.subprocess.PIPE,
+#         stderr=asyncio.subprocess.PIPE)
+    
+#     # Create tasks for reading stdout and stderr
+#     stdout_task = asyncio.create_task(proc.stdout.read())
+#     stderr_task = asyncio.create_task(proc.stderr.read())
+    
+#     # Wait for the subprocess to finish
+#     await proc.wait()
+    
+#     # Gather results (if you need them)
+#     stdout, stderr = await asyncio.gath
+
 
 ## Wiggle
 
@@ -274,14 +293,19 @@ def upload_file(song_id: str, voice_id: str, uploaded_file: UploadFile = File(..
             infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{converted_filename}\''
             shell_cmd = f'{infer_cmd}'
             print(shell_cmd)
-            asyncio.run(run(shell_cmd))
+            # asyncio.run(run(shell_cmd))
+            asyncio.run(run(shell_cmd, blocking=True))
+
         else:
             print(f'Training for voice [{voice_id}] and then inferring for song [{song_id}]')
             train_cmd = f'python3 script_train.py -i \'{uploaded_voice_sample}\' -s \'{voice_id}\''
             infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{converted_filename}\''
             shell_cmd = f'{train_cmd} && {infer_cmd}'
             print(shell_cmd)
-            asyncio.run(run(shell_cmd))
+            # asyncio.run(run(shell_cmd))
+            asyncio.run(run(shell_cmd, blocking=True))
+
+            # asyncio.run(run('while true; do echo "PID: $$ - $(date)"; sleep 1; done'))
 
     return {
         'uploaded_file': uploaded_file.filename,
@@ -290,6 +314,7 @@ def upload_file(song_id: str, voice_id: str, uploaded_file: UploadFile = File(..
         'file_id': converted_filename,
     }
 
+# new shell instead of child process
 
 # @app.get('/infer_audio/{song_id}')
 # async def infer_audio(song_id: str, voice_id: str):
@@ -317,7 +342,7 @@ def infer_audio(song_id: str, voice_id: str):
         infer_cmd = f'python3 script_infer.py -i \'{song_path}\' -m \'{models_directory}/{voice_id}\' -s \'{voice_id}\' -o \'{converted_directory}/{converted_filename}\''
         print(infer_cmd)
         shell_cmd = f'{infer_cmd}'
-        asyncio.run(run(shell_cmd))
+        asyncio.run(run(shell_cmd, blocking=False))
     
     return {
         'file_id': converted_filename,
@@ -328,8 +353,8 @@ def infer_audio(song_id: str, voice_id: str):
 async def get_audio(file_id: str, voice_id: str):
     # rel_filepath = f'files/{fileId}_converted.wav'
     # file_path_original = os.path.join(f'{upload_directory}', f'{file_id}.wav')
-    converted_filename = f'{voice_id}_{file_id}_converted.wav'
-    file_path_converted = os.path.join(f'{converted_directory}', f'{converted_filename}')
+    # converted_filename = f'{voice_id}_{file_id}_converted.wav'
+    file_path_converted = os.path.join(f'{converted_directory}', f'{file_id}')
     file_path_trained_models = os.path.join(f'{models_directory}/{voice_id}')
 
     # if not os.path.exists(file_path_original):

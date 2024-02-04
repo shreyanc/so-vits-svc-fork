@@ -5,6 +5,7 @@ import subprocess
 from typing import Literal
 from logging import getLogger
 import torch
+from mix import mix_audio
 
 from so_vits_svc_fork.utils import get_optimal_device
 
@@ -112,3 +113,16 @@ infer(
     absolute_thresh=False,
     max_chunk_seconds=40,
 )
+
+
+output_filename = Path(args.output).stem
+output_filepath = args.output
+song_id = '_'.join(output_filename.split('_')[1:-1])
+instrumental_filename = '../TestSongs/'+f"{song_id}_ins.wav"
+mix_audio(vocal_filepath=output_filepath, instrumental_filepath=instrumental_filename, output_filepath='../Converted/'+f'{output_filename}.wav')
+
+# output_filename = 'A2B0EFE9-70F2-4D22-ACEC-42D255925547_oops_i_did_it_again_converted.wav'
+# output_filepath = 'Converted/'+output_filename
+# song_id = '_'.join(output_filename.split('_')[1:-1])
+# instrumental_filename = 'TestSongs/'+f"{song_id}_ins.wav"
+# mix_audio(vocal_filepath=output_filepath, instrumental_filepath=instrumental_filename, output_filepath='Converted/'+f'{output_filename}_mixed.wav')
